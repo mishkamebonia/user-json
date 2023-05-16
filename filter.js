@@ -1,57 +1,54 @@
-const genderList = document.querySelectorAll('input[name="gender"]')
+import storageData from './storage.json'  assert { type: 'json' }
 
-let maleArr = []
-let femaleArr = []
-let otherArr = []
+import {renderItems} from './card.js'
 
-export function filter(data) {
-  genderList.forEach(item => {
-    item.addEventListener('click', () => {
-      const value = item.value.toLowerCase()
-      const display = document.querySelectorAll('.accordion-item')
-  
-      if (item.checked) {
-        for (let i = 0; i < data.length; i++) {
-          const dataValue = data[i].gender.toLowerCase()
+const usersCounter = document.querySelector('#user-counter')
 
-          if (value === dataValue) {
+const searchBar = document.querySelector('#search-bar')
 
-            if ('male' === dataValue) {
-              maleArr.push(dataValue)
-              display[i].style.display = 'none'
-              console.log(value, dataValue, maleArr.length)
-            } else if ('female' === dataValue) {
-              femaleArr.push(dataValue)
-              display[i].style.display = 'none'
-              console.log(value, dataValue, femaleArr.length)
-            } else if ('other' !== dataValue) {
-              otherArr.push(dataValue)
-              display[i].style.display = 'none'
-              console.log(value, dataValue, otherArr.length)
-            }
+const checkboxes = document.querySelectorAll('.form-check-input')
 
-          }
+let itemsArr = []
 
-      //     else if (!value === !dataValue) {
-      //   if ('male' === dataValue) {
-      //     maleArr.push(dataValue)
-      //     display[i].style.display = 'none'
-      //     console.log(value, dataValue, maleArr.length + 'close')
-      //     console.log(value, dataValue, maleArr)
-      //   } else if ('female' === dataValue) {
-      //     femaleArr.push(dataValue)
-      //     display[i].style.display = 'none'
-      //     console.log(value, dataValue, maleArr.length + 'close')
-      //   } else {
-      //     otherArr.push(dataValue)
-      //     display[i].style.display = 'none'
-      //     console.log(value, dataValue, maleArr.length + 'close')
-      //   }
-      // }
-  
+export function checkboxListener() {
+  checkboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', (event) => {
+      const value = checkbox.value.toLowerCase()
+      searchBar.value = ''
+
+      if (checkbox.checked) {
+        itemsArr.push(value)
+      } else {
+        const index = itemsArr.indexOf(value)
+        
+        if (index > -1) {
+          itemsArr.splice(index, 1)
         }
-      } 
-  
+      }
+      filter()
     })
   })
+}
+
+function filter() {
+  const filteredData = storageData.filter(data => {
+    const dataValue = data.gender.toLowerCase()
+    
+    const checked = itemsArr.includes(dataValue)
+    
+    if (itemsArr.includes('other')) {
+      if (dataValue !== 'male' && dataValue !== 'female') {
+        return itemsArr.includes('other')
+      }
+    }
+
+    if (itemsArr.length === 0) {
+      return data
+    }
+    return checked
+  })
+
+  usersCounter.textContent = filteredData.length
+
+  renderItems(filteredData)
 }

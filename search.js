@@ -2,19 +2,19 @@ const searchBar = document.querySelector('#search-bar')
 
 export function search() {
   searchBar.addEventListener('input', () => {
-    const filter = searchBar.value.toLowerCase()
-    const item = document.querySelectorAll('.accordion-item')
-    const searchKey = document.querySelectorAll('.accordion-item h6')
+    const valueFilter = searchBar.value.toLowerCase()
+    const cards = document.querySelectorAll('.accordion-item')
+    const searchTitle = document.querySelectorAll('.accordion-item h6')
     let counter = 0
 
-    for (let i = 0; i < searchKey.length; i++) {
-      const value = searchKey[i].textContent.toLowerCase()
+    for (let i = 0; i < cards.length; i++) {
+      const value = searchTitle[i].textContent.toLowerCase()
 
-      if (value.includes(filter)) {
-        item[i].style.display = 'block'
+      if (value.includes(valueFilter)) {
+        cards[i].style.display = 'block'
         counter++
       } else {
-        item[i].style.display = 'none'
+        cards[i].style.display = 'none'
       }
     }
     const usersCounter = document.querySelector('#user-counter')
